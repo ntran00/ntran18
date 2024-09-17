@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milestone 1</title>
+    <title>Milestone 1: Display Book Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,32 +32,42 @@
             text-align: center;
             margin-top: 20px;
         }
-        .book-container {
+        .tabs {
             display: flex;
-            flex-direction: column;
-            background-color: #fff;
-            padding: 20px;
-            border: 1px solid #ddd;
-            max-width: 600px;
-            margin: 20px auto;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            justify-content: center;
+            margin: 20px 0;
         }
-        .book-title {
-            font-size: 24px;
-            margin-bottom: 10px;
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            margin-right: 5px;
         }
-        .book-author {
-            font-size: 18px;
-            color: #777;
+        .tab.active {
+            background-color: #333;
+            color: white;
         }
-        .book-cover img {
-            width: 200px;
+        .content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .content.active {
+            display: block;
+        }
+        .book-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .book-list li {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .book-list img {
+            width: 100px;
             height: auto;
-            margin-bottom: 20px;
-        }
-        .book-description {
-            margin-top: 10px;
-            line-height: 1.6;
+            margin-right: 10px;
+            vertical-align: middle;
         }
         .loading {
             text-align: center;
@@ -78,18 +88,45 @@
     <a href="milestone4.html">Milestone 4</a>
 </div>
 
-<h1>Milestone 1</h1>
-<div id="book-display" class="book-container">
-    <div class="loading">Loading book data...</div>
+<h1>Milestone 1: Display Book Data</h1>
+
+<!-- Tabs -->
+<div class="tabs">
+    <div class="tab active" data-tab="single-book">Single Book Data</div>
+    <div class="tab" data-tab="book-list">Book List (Search Result)</div>
+</div>
+
+<!-- Content for single book -->
+<div id="single-book" class="content active">
+    <div id="book-display" class="book-container">
+        <div class="loading">Loading single book data...</div>
+    </div>
+</div>
+
+<!-- Content for book list -->
+<div id="book-list" class="content">
+    <ul id="book-list-display" class="book-list">
+        <li class="loading">Loading book list...</li>
+    </ul>
 </div>
 
 <script>
     $(document).ready(function() {
-        // URL of the Google Books API (single book data)
-        const apiURL = 'https://www.googleapis.com/books/v1/volumes/Wfan6L9RGgYC';
+        // Handle tab switching
+        $('.tab').click(function() {
+            $('.tab').removeClass('active');
+            $(this).addClass('active');
 
-        // AJAX call to fetch the book data
-        $.getJSON(apiURL, function(data) {
+            const tabID = $(this).data('tab');
+            $('.content').removeClass('active');
+            $('#' + tabID).addClass('active');
+        });
+
+        // URL of the Google Books API (single book data)
+        const singleBookApiURL = 'https://www.googleapis.com/books/v1/volumes/Wfan6L9RGgYC';
+
+        // AJAX call to fetch single book data
+        $.getJSON(singleBookApiURL, function(data) {
             const book = data.volumeInfo;
             
             // Book details
@@ -105,10 +142,36 @@
                 <div class="book-author">by ${authors}</div>
                 <div class="book-description">${description}</div>
             `;
-
-            $('#book-display').html(bookDisplay); // Insert the book details into the HTML
+            $('#book-display').html(bookDisplay);
         }).fail(function() {
             $('#book-display').html('<p>Error loading book data.</p>');
+        });
+
+        // URL of the Google Books API (search for "modern web")
+        const searchBooksApiURL = 'https://www.googleapis.com/books/v1/volumes?q=modern%20web';
+
+        // AJAX call to fetch book list data
+        $.getJSON(searchBooksApiURL, function(data) {
+            const books = data.items;
+            let bookListHTML = '';
+
+            books.forEach(book => {
+                const volume = book.volumeInfo;
+                const title = volume.title;
+                const authors = volume.authors ? volume.authors.join(', ') : 'Unknown Author';
+                const coverImage = volume.imageLinks ? volume.imageLinks.thumbnail : 'https://via.placeholder.com/100';
+
+                bookListHTML += `
+                    <li>
+                        <img src="${coverImage}" alt="${title}">
+                        <strong>${title}</strong> by ${authors}
+                    </li>
+                `;
+            });
+
+            $('#book-list-display').html(bookListHTML);
+        }).fail(function() {
+            $('#book-list-display').html('<p>Error loading book list.</p>');
         });
     });
 </script>
