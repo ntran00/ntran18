@@ -44,13 +44,13 @@
 <header>
     <h1>Book Search Application</h1>
     <h2>by Natalie Tran</h2>
-    <p>Senior at Kennesaw State University, IT3883/Section W01</p>
+    <p>Senior at Kennesaw State University, IT4403/Section W01</p>
 </header>
 
 <div class="content">
     <section>
         <h2>Course Information</h2>
-        <p><strong>Course:</strong> IT3883 - Web Development</p>
+        <p><strong>Course:</strong> IT4403 - Advanced Web and Mobile Application</p>
         <p><strong>Affiliation:</strong> Kennesaw State University</p>
         <p>For more information, visit <a href="http://ccse.kennesaw.edu/it" target="_blank">CCSE at KSU</a>.</p>
     </section>
