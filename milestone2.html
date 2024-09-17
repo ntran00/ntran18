@@ -1,1 +1,90 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        /* Navbar styling */
+        .navbar {
+            background-color: #333;
+            padding: 10px 20px;
+            color: white;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        /* Main content styling */
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .book-container {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .book-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .book-author {
+            font-size: 18px;
+            color: #777;
+        }
+        .book-cover img {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .book-description {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 18px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="milestone1.html">Milestone 1</a>
+    <a href="milestone2.html">Milestone 2</a>
+    <a href="milestone3.html">Milestone 3</a>
+    <a href="milestone4.html">Milestone 4</a>
+</div>
+
+<h1>Milestone 2</h1>
+<div id="book-display" class="book-container">
+    <div class="loading">Loading book data...</div>
+</div>
+
+
+
+</body>
+</html>
