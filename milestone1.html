@@ -1,1 +1,91 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 1: Display Book Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .book-container {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .book-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .book-author {
+            font-size: 18px;
+            color: #777;
+        }
+        .book-cover img {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .book-description {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 18px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Milestone 1: Display Book Data</h1>
+<div id="book-display" class="book-container">
+    <div class="loading">Loading book data...</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // URL of the Google Books API (single book data)
+        const apiURL = 'https://www.googleapis.com/books/v1/volumes/Wfan6L9RGgYC';
+
+        // AJAX call to fetch the book data
+        $.getJSON(apiURL, function(data) {
+            const book = data.volumeInfo;
+            
+            // Book details
+            const title = book.title;
+            const authors = book.authors ? book.authors.join(', ') : 'Unknown Author';
+            const coverImage = book.imageLinks ? book.imageLinks.thumbnail : 'https://via.placeholder.com/200';
+            const description = book.description ? book.description : 'No description available.';
+
+            // Display book details
+            const bookDisplay = `
+                <div class="book-cover"><img src="${coverImage}" alt="${title}"></div>
+                <div class="book-title">${title}</div>
+                <div class="book-author">by ${authors}</div>
+                <div class="book-description">${description}</div>
+            `;
+
+            $('#book-display').html(bookDisplay); // Insert the book details into the HTML
+        }).fail(function() {
+            $('#book-display').html('<p>Error loading book data.</p>');
+        });
+    });
+</script>
+
+</body>
+</html>
