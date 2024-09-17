@@ -59,12 +59,12 @@
         <h2>Project Overview</h2>
         <p>This project is a single-page application (SPA) that interacts with the Google Books API to search and display book details. Below are the four milestones for this project:</p>
 
-        <h3>Table of Contents (Milestones)</h3>
+        <h3>Milestones</h3>
         <ul class="milestone-list">
-            <li><a href="milestone1.html">Milestone 1: Design Web Pages with JSON Data</a></li>
-            <li><a href="milestone2.html">Milestone 2: Search and Get Book Information from Google Books API</a></li>
-            <li><a href="milestone3.html">Milestone 3: AJAX Operations</a></li>
-            <li><a href="milestone4.html">Milestone 4: Improve UI with SPA Design</a></li>
+            <li><a href="milestone1.html">Milestone 1</a></li>
+            <li><a href="milestone2.html">Milestone 2</a></li>
+            <li><a href="milestone3.html">Milestone 3</a></li>
+            <li><a href="milestone4.html">Milestone 4</a></li>
         </ul>
     </section>
 </div>
