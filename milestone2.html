@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +11,7 @@
             padding: 0;
             background-color: #f9f9f9;
         }
+
         /* Navbar styling */
         .navbar {
             background-color: #2588BE;
@@ -28,12 +28,69 @@
         .navbar a:hover {
             text-decoration: underline;
         }
+
         /* Main content styling */
         h1 {
             text-align: center;
             margin-top: 20px;
         }
-   
+
+        /* Search section */
+        #searchTerm {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        #searchBtn {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #2588BE;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #searchBtn:hover {
+            background-color: #1a6a9d;
+        }
+
+        /* Results section */
+        #book-results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .book-item {
+            width: 200px;
+            margin: 15px;
+            text-align: center;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-item img {
+            width: 100px;
+            height: auto;
+        }
+
+        .book-item a {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2588BE;
+            text-decoration: none;
+        }
+
+        .book-item a:hover {
+            text-decoration: underline;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -43,15 +100,52 @@
 <div class="navbar">
     <a href="index.html">Home</a>
     <a href="milestone1.html">Milestone 1</a>
-    <a href="milestone2.html">Milestone 2</a>
+    <a href="booksearchpage.html">Milestone 2</a>
     <a href="milestone3.html">Milestone 3</a>
     <a href="milestone4.html">Milestone 4</a>
 </div>
 
-<h1>Milestone 2</h1>
-    <div class="soon">Coming Soon!</div>
+<!-- Search input and button -->
+<input type="text" id="searchTerm" placeholder="Enter search term">
+<button id="searchBtn">Search</button>
 
+<!-- Container to display results -->
+<div id="book-results"></div>
 
+<script>
+$(document).ready(function() {
+    $('#searchBtn').click(function() {
+        var searchTerm = $('#searchTerm').val();
+        var apiURL = 'https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&maxResults=60';
+        
+        $.getJSON(apiURL, function(data) {
+            var results = data.items;
+            var output = '';
+            
+            // Check if results exist
+            if (results) {
+                // Loop through the books and display title and small cover image
+                $.each(results, function(index, book) {
+                    var title = book.volumeInfo.title;
+                    var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
+                    var bookId = book.id;
+                    
+                    output += `
+                      <div class="book-item">
+                        <img src="${coverImg}" alt="${title}">
+                        <a href="book-details.html?bookId=${bookId}">${title}</a>
+                      </div>
+                    `;
+                });
+            } else {
+                output = '<p>No books found for the search term.</p>';
+            }
+            
+            $('#book-results').html(output);
+        });
+    });
+});
+</script>
 
 </body>
 </html>
