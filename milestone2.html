@@ -121,7 +121,8 @@ $(document).ready(function() {
             return;
         }
 
-        var apiURL = 'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(searchTerm) + '&maxResults=60';
+       var apiURL = 'https://cors-anywhere.herokuapp.com/https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(searchTerm) + '&maxResults=60';
+
         
         $.getJSON(apiURL)
             .done(function(data) {
