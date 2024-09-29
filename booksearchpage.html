@@ -127,13 +127,7 @@
 <!-- Search input and button -->
 <input type="text" id="searchTerm" placeholder="Enter search term">
 <button id="searchBtn">Search</button>
-<!-- In your search results -->
-output += `
-    <div class="book-item">
-        <img src="${coverImg}" alt="${title}">
-        <a href="bookdetails.html?bookId=${bookId}">${title}</a>
-    </div>
-`;
+
 <!-- Container to display results -->
 <div id="book-results"></div>
 
@@ -159,11 +153,12 @@ $(document).ready(function() {
                 var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
                 var bookId = book.id;
                 
+                <!-- In your search results -->
                 output += `
-                    <div class="book-item">
-                        <img src="${coverImg}" alt="${title}">
-                        <a href="book-details.html?bookId=${bookId}">${title}</a>
-                    </div>
+                  <div class="book-item">
+                    <img src="${coverImg}" alt="${title}">
+                    <a href="book-details.html?bookId=${bookId}">${title}</a>
+                </div>
                 `;
             });
         } else {
