@@ -191,17 +191,35 @@ $(document).ready(function() {
             return;
         }
 
-        var apiURL = 'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(searchTerm) + '&maxResults=60';
+        var apiURL1 = 'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(searchTerm) + '&maxResults=40';
+        var apiURL2 = 'https://www.googleapis.com/books/v1/volumes?q=' + encodeURIComponent(searchTerm) + '&maxResults=20&startIndex=40';
 
-        $.getJSON(apiURL)
+        allResults = []; // Reset results
+
+        // First API call for the first 40 results
+        $.getJSON(apiURL1)
             .done(function(data) {
-                allResults = data.items;
-                totalBooks = allResults.length;
-                currentPage = 1; // Reset to first page
+                if (data.items && data.items.length > 0) {
+                    allResults = allResults.concat(data.items);
+                }
 
-                // Display first page of books and pagination
-                displayBooks(currentPage);
-                displayPagination();
+                // Second API call for the next 20 results
+                $.getJSON(apiURL2)
+                    .done(function(data) {
+                        if (data.items && data.items.length > 0) {
+                            allResults = allResults.concat(data.items);
+                        }
+
+                        totalBooks = allResults.length;
+                        currentPage = 1; // Reset to first page
+
+                        // Display first page of books and pagination
+                        displayBooks(currentPage);
+                        displayPagination();
+                    })
+                    .fail(function() {
+                        alert("Failed to fetch the next set of results. Please check your connection.");
+                    });
             })
             .fail(function() {
                 alert("Failed to fetch data. Please check your connection or try again later.");
