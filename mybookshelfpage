@@ -1,0 +1,29 @@
+<div id="bookshelf"></div>
+
+<script>
+$(document).ready(function() {
+  var bookshelfId = 'your_public_bookshelf_id';
+  var apiURL = `https://www.googleapis.com/books/v1/mylibrary/bookshelves/${bookshelfId}/volumes`;
+
+  $.getJSON(apiURL, function(data) {
+    var books = data.items;
+    var output = '';
+
+    // Loop through the books in the bookshelf
+    $.each(books, function(index, book) {
+      var title = book.volumeInfo.title;
+      var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
+      var bookId = book.id;
+      
+      output += `
+        <div>
+          <img src="${coverImg}" alt="${title}">
+          <a href="book-details.html?bookId=${bookId}">${title}</a>
+        </div>
+      `;
+    });
+
+    $('#bookshelf').html(output);
+  });
+});
+</script>
