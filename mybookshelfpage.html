@@ -1,29 +1,123 @@
-<div id="bookshelf"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookshelf</title>
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background-color: #2588BE;
+            padding: 10px 20px;
+            color: white;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bookshelf section */
+        #bookshelf-results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .book-item {
+            width: 200px;
+            margin: 15px;
+            text-align: center;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-item img {
+            width: 100px;
+            height: auto;
+        }
+
+        .book-item a {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2588BE;
+            text-decoration: none;
+        }
+
+        .book-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="milestone1.html">Milestone 1</a>
+    <a href="milestone2.html">Milestone 2</a>
+    <a href="milestone3.html">Milestone 3</a>
+    <a href="milestone4.html">Milestone 4</a>
+    <a href="mybookshelf.html">My Bookshelf</a>
+</div>
+
+<h1 style="text-align: center; margin-top: 20px;">My Bookshelf</h1>
+
+<!-- Container to display books -->
+<div id="bookshelf-results"></div>
 
 <script>
 $(document).ready(function() {
-  var bookshelfId = 'your_public_bookshelf_id';
-  var apiURL = `https://www.googleapis.com/books/v1/mylibrary/bookshelves/${bookshelfId}/volumes`;
+    var apiURL = 'https://www.googleapis.com/books/v1/users/110747721796776298740/bookshelves/110747721796776298740/volumes';
 
-  $.getJSON(apiURL, function(data) {
-    var books = data.items;
-    var output = '';
+    $.getJSON(apiURL)
+        .done(function(data) {
+            var results = data.items;
+            var output = '';
+            
+            if (results && results.length > 0) {
+                // Loop through the books and display title and small cover image
+                $.each(results, function(index, book) {
+                    var title = book.volumeInfo.title;
+                    var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
+                    var bookId = book.id;
 
-    // Loop through the books in the bookshelf
-    $.each(books, function(index, book) {
-      var title = book.volumeInfo.title;
-      var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
-      var bookId = book.id;
-      
-      output += `
-        <div>
-          <img src="${coverImg}" alt="${title}">
-          <a href="book-details.html?bookId=${bookId}">${title}</a>
-        </div>
-      `;
-    });
-
-    $('#bookshelf').html(output);
-  });
+                    // Construct the book item output
+                    output += `
+                      <div class="book-item">
+                        <img src="${coverImg}" alt="${title}">
+                        <a href="bookdetails.html?bookId=${bookId}">${title}</a>
+                      </div>
+                    `;
+                });
+            } else {
+                output = '<p>No books found in your bookshelf.</p>';
+            }
+            
+            // Display the constructed output in the results container
+            $('#bookshelf-results').html(output);
+        })
+        .fail(function() {
+            alert("Failed to fetch data. Please check your connection or try again later.");
+        });
 });
 </script>
+
+</body>
+</html>
