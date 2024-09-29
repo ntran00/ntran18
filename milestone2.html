@@ -29,10 +29,34 @@
             text-decoration: underline;
         }
 
-        /* Main content styling */
-        h1 {
-            text-align: center;
+        /* Tab styling */
+        .tabs {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #2588BE;
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .tab.active {
+            background-color: #1a6a9d;
+        }
+        .tab:hover {
+            background-color: #1a6a9d;
+        }
+
+        /* Section styling */
+        .section {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .section.active {
+            display: block;
         }
 
         /* Search section */
@@ -43,7 +67,6 @@
             width: 300px;
             font-size: 16px;
         }
-
         #searchBtn {
             display: block;
             margin: 0 auto;
@@ -53,7 +76,6 @@
             border: none;
             cursor: pointer;
         }
-
         #searchBtn:hover {
             background-color: #1a6a9d;
         }
@@ -65,7 +87,6 @@
             justify-content: center;
             margin-top: 20px;
         }
-
         .book-item {
             width: 200px;
             margin: 15px;
@@ -74,12 +95,10 @@
             background-color: white;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
         .book-item img {
             width: 100px;
             height: auto;
         }
-
         .book-item a {
             display: block;
             margin-top: 10px;
@@ -87,7 +106,6 @@
             color: #2588BE;
             text-decoration: none;
         }
-
         .book-item a:hover {
             text-decoration: underline;
         }
@@ -100,20 +118,47 @@
 <div class="navbar">
     <a href="index.html">Home</a>
     <a href="milestone1.html">Milestone 1</a>
-    <a href="booksearchpage.html">Milestone 2</a>
-    <a href="milestone3.html">Milestone 3</a>
-    <a href="milestone4.html">Milestone 4</a>
+    <a href="milestone2.html">Milestone 2</a>
 </div>
 
-<!-- Search input and button -->
-<input type="text" id="searchTerm" placeholder="Enter search term">
-<button id="searchBtn">Search</button>
+<!-- Tab navigation for Milestone 2 -->
+<div class="tabs">
+    <div class="tab active" data-tab="book-search">Book Search Page</div>
+    <div class="tab" data-tab="book-details">Book Details Page</div>
+    <div class="tab" data-tab="my-bookshelf">My Bookshelf Page</div>
+</div>
 
-<!-- Container to display results -->
-<div id="book-results"></div>
+<!-- Sections for each tab -->
+<div id="book-search" class="section active">
+    <h1>Book Search Page</h1>
+    <input type="text" id="searchTerm" placeholder="Enter search term">
+    <button id="searchBtn">Search</button>
+    <div id="book-results"></div>
+</div>
+
+<div id="book-details" class="section">
+    <h1>Book Details Page</h1>
+    <p>This page will display details about a selected book. (Implement further as needed)</p>
+</div>
+
+<div id="my-bookshelf" class="section">
+    <h1>My Bookshelf Page</h1>
+    <p>This page will display books from my public Google Books bookshelf. (Implement further as needed)</p>
+</div>
 
 <script>
 $(document).ready(function() {
+    // Tab navigation logic
+    $('.tab').click(function() {
+        // Remove 'active' class from all tabs and sections
+        $('.tab, .section').removeClass('active');
+        
+        // Add 'active' class to the clicked tab and corresponding section
+        $(this).addClass('active');
+        $('#' + $(this).data('tab')).addClass('active');
+    });
+
+    // Book search functionality
     $('#searchBtn').click(function() {
         var searchTerm = $('#searchTerm').val();
         var apiURL = 'https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&maxResults=60';
