@@ -127,7 +127,13 @@
 <!-- Search input and button -->
 <input type="text" id="searchTerm" placeholder="Enter search term">
 <button id="searchBtn">Search</button>
-
+<!-- In your search results -->
+output += `
+    <div class="book-item">
+        <img src="${coverImg}" alt="${title}">
+        <a href="bookdetails.html?bookId=${bookId}">${title}</a>
+    </div>
+`;
 <!-- Container to display results -->
 <div id="book-results"></div>
 
