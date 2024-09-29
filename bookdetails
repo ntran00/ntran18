@@ -1,0 +1,24 @@
+<div id="book-details"></div>
+
+<script>
+$(document).ready(function() {
+  // Get book ID from URL
+  var params = new URLSearchParams(window.location.search);
+  var bookId = params.get('bookId');
+  
+  var apiURL = 'https://www.googleapis.com/books/v1/volumes/' + bookId;
+  
+  $.getJSON(apiURL, function(data) {
+    var book = data.volumeInfo;
+    var output = `
+      <h2>${book.title}</h2>
+      <p><strong>Authors:</strong> ${book.authors.join(', ')}</p>
+      <p><strong>Publisher:</strong> ${book.publisher}</p>
+      <p><strong>Description:</strong> ${book.description}</p>
+      <img src="${book.imageLinks.thumbnail}" alt="${book.title}">
+    `;
+    
+    $('#book-details').html(output);
+  });
+});
+</script>
