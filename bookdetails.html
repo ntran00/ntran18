@@ -1,24 +1,126 @@
-<div id="book-details"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background-color: #2588BE;
+            padding: 10px 20px;
+            color: white;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Book details styling */
+        .book-details {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-details img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .book-details h2 {
+            color: #2588BE;
+        }
+
+        .book-details p {
+            line-height: 1.6;
+        }
+
+        .book-info {
+            margin-top: 20px;
+        }
+
+        .book-info span {
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="milestone1.html">Milestone 1</a>
+    <a href="milestone2.html">Milestone 2</a>
+    <a href="milestone3.html">Milestone 3</a>
+    <a href="milestone4.html">Milestone 4</a>
+</div>
+
+<!-- Book details container -->
+<div class="book-details" id="book-details"></div>
 
 <script>
 $(document).ready(function() {
-  // Get book ID from URL
-  var params = new URLSearchParams(window.location.search);
-  var bookId = params.get('bookId');
-  
-  var apiURL = 'https://www.googleapis.com/books/v1/volumes/' + bookId;
-  
-  $.getJSON(apiURL, function(data) {
-    var book = data.volumeInfo;
-    var output = `
-      <h2>${book.title}</h2>
-      <p><strong>Authors:</strong> ${book.authors.join(', ')}</p>
-      <p><strong>Publisher:</strong> ${book.publisher}</p>
-      <p><strong>Description:</strong> ${book.description}</p>
-      <img src="${book.imageLinks.thumbnail}" alt="${book.title}">
-    `;
-    
-    $('#book-details').html(output);
-  });
+    // Function to get the query parameter from the URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Get the book ID from the URL
+    var bookId = getQueryParam('bookId');
+
+    if (bookId) {
+        var apiURL = 'https://www.googleapis.com/books/v1/volumes/' + bookId;
+
+        // Fetch book details from the Google Books API
+        $.getJSON(apiURL)
+            .done(function(data) {
+                var book = data.volumeInfo;
+                var output = `
+                    <h2>${book.title}</h2>
+                    <img src="${book.imageLinks ? book.imageLinks.thumbnail : 'no-image.png'}" alt="${book.title}">
+                    <div class="book-info">
+                        <p><span>Authors:</span> ${book.authors ? book.authors.join(', ') : 'N/A'}</p>
+                        <p><span>Publisher:</span> ${book.publisher || 'N/A'}</p>
+                        <p><span>Published Date:</span> ${book.publishedDate || 'N/A'}</p>
+                        <p><span>Page Count:</span> ${book.pageCount || 'N/A'}</p>
+                        <p><span>Categories:</span> ${book.categories ? book.categories.join(', ') : 'N/A'}</p>
+                        <p><span>Price:</span> ${data.saleInfo && data.saleInfo.retailPrice ? `$${data.saleInfo.retailPrice.amount}` : 'N/A'}</p>
+                    </div>
+                    <div>
+                        <h3>Description</h3>
+                        <p>${book.description || 'No description available.'}</p>
+                    </div>
+                `;
+
+                // Display the book details
+                $('#book-details').html(output);
+            })
+            .fail(function() {
+                alert("Failed to fetch book details. Please check your connection or try again later.");
+            });
+    } else {
+        alert("No book ID provided.");
+    }
 });
 </script>
+
+</body>
+</html>
