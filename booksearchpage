@@ -1,0 +1,36 @@
+<!-- Search input and button -->
+<input type="text" id="searchTerm" placeholder="Enter search term">
+<button id="searchBtn">Search</button>
+
+<!-- Container to display results -->
+<div id="book-results"></div>
+
+<script>
+$(document).ready(function() {
+  $('#searchBtn').click(function() {
+    var searchTerm = $('#searchTerm').val();
+    var apiURL = 'https://www.googleapis.com/books/v1/volumes?q=' + searchTerm + '&maxResults=60';
+    
+    $.getJSON(apiURL, function(data) {
+      var results = data.items;
+      var output = '';
+      
+      // Loop through the books and display title and small cover image
+      $.each(results, function(index, book) {
+        var title = book.volumeInfo.title;
+        var coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.smallThumbnail : 'no-image.png';
+        var bookId = book.id;
+        
+        output += `
+          <div>
+            <img src="${coverImg}" alt="${title}">
+            <a href="book-details.html?bookId=${bookId}">${title}</a>
+          </div>
+        `;
+      });
+      
+      $('#book-results').html(output);
+    });
+  });
+});
+</script>
