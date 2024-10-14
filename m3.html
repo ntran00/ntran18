@@ -168,8 +168,129 @@
 </div>
 
 <script>
-// Your JavaScript code (same as before)
+$(document).ready(function() {
+    let currentPage = 1;
+    const resultsPerPage = 10;
+    let totalResults = 0;
+    const maxPagesToShow = 5;
+
+    // Search function
+    $('#searchBtn').click(function() {
+        const searchTerm = $('#searchTerm').val();
+        if (searchTerm.trim() === '') {
+            alert("Please enter a search term.");
+            return;
+        }
+
+        // Call the Google Books API with AJAX
+        const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&startIndex=${(currentPage - 1) * resultsPerPage}&maxResults=${resultsPerPage}`;
+        
+        $.ajax({
+            url: apiURL,
+            method: 'GET',
+            success: function(data) {
+                totalResults = data.totalItems;
+                displayResults(data.items, '#book-results');
+                displayPagination(totalResults, currentPage);
+            },
+            error: function() {
+                alert("Failed to fetch data. Please check your connection or try again later.");
+            }
+        });
+    });
+
+    // Pagination function
+    function displayPagination(totalResults, currentPage) {
+        const totalPages = Math.ceil(totalResults / resultsPerPage);
+        let paginationHTML = '';
+
+        // Determine start and end page numbers for the current set of 5 pages
+        const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+        // Display previous set of pages if we're beyond page 1
+        if (startPage > 1) {
+            paginationHTML += `<button data-page="1">1</button>...`;
+        }
+
+        // Generate page buttons for current set of pages
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `<button class="${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+        }
+
+        // Display next set of pages if there are more pages beyond the current set
+        if (endPage < totalPages) {
+            paginationHTML += `...<button data-page="${endPage + 1}">></button>`;
+        }
+
+        $('#pagination').html(paginationHTML);
+    }
+
+    // Event listener for pagination buttons
+    $('#pagination').on('click', 'button', function() {
+        currentPage = $(this).data('page');
+        $('#searchBtn').click();  // Perform the search again when a new page is selected
+    });
+
+    // Display search results
+    function displayResults(books, container) {
+        let output = '';
+        books.forEach(book => {
+            const title = book.volumeInfo.title;
+            const coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no-image.png';
+            const bookId = book.id;
+
+            output += `
+                <div class="book-item">
+                    <img src="${coverImg}" alt="${title}">
+                    <a href="#" class="book-link" data-book-id="${bookId}">${title}</a>
+                </div>
+            `;
+        });
+        $(container).html(output);
+    }
+
+    // Fetch book details and display them
+    $(document).on('click', '.book-link', function(e) {
+        e.preventDefault();
+        const bookId = $(this).data('book-id');
+        const apiURL = `https://www.googleapis.com/books/v1/volumes/${bookId}`;
+        
+        $.ajax({
+            url: apiURL,
+            method: 'GET',
+            success: function(book) {
+                const bookDetails = `
+                    <h3>${book.volumeInfo.title}</h3>
+                    <img src="${book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no-image.png'}" alt="${book.volumeInfo.title}">
+                    <p><strong>Author:</strong> ${book.volumeInfo.authors.join(', ')}</p>
+                    <p><strong>Publisher:</strong> ${book.volumeInfo.publisher}</p>
+                    <p><strong>Description:</strong> ${book.volumeInfo.description}</p>
+                `;
+                $('#book-details').html(bookDetails);
+            },
+            error: function() {
+                alert("Failed to load book details.");
+            }
+        });
+    });
+
+    // Display books from your public bookshelf
+    const bookshelfApiURL = 'https://www.googleapis.com/books/v1/users/110747721796776298740/bookshelves/0/volumes';
+    $.ajax({
+        url: bookshelfApiURL,
+        method: 'GET',
+        success: function(data) {
+            displayResults(data.items, '#bookshelf-results');
+        },
+        error: function() {
+            alert("Failed to load bookshelf.");
+        }
+    });
+});
 </script>
+
+
 
 </body>
 </html>
