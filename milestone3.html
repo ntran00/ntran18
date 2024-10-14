@@ -49,8 +49,128 @@
     <a href="milestone4.html">Milestone 4</a>
 </div>
 
-<h1>Milestone 3</h1>
-    <p>Coming Soon!</p>
+<div id="content">
+    <input type="text" id="searchTerm" placeholder="Enter search term">
+    <button id="searchBtn">Search</button>
+    <div id="book-results"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+    <!-- Book Details Section -->
+    <div id="book-details"></div>
+
+    <!-- Bookshelf Results -->
+    <h2>My Bookshelf</h2>
+    <div id="bookshelf-results"></div>
+</div>
+
+<script>
+$(document).ready(function() {
+    let currentPage = 1;
+    const resultsPerPage = 10;
+    let totalResults = 0;
+
+    // Search function
+    $('#searchBtn').click(function() {
+        const searchTerm = $('#searchTerm').val();
+        if (searchTerm.trim() === '') {
+            alert("Please enter a search term.");
+            return;
+        }
+
+        // Call the Google Books API with AJAX
+        const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchTerm)}&startIndex=${(currentPage - 1) * resultsPerPage}&maxResults=${resultsPerPage}`;
+        
+        $.ajax({
+            url: apiURL,
+            method: 'GET',
+            success: function(data) {
+                totalResults = data.totalItems;
+                displayResults(data.items, '#book-results');
+                displayPagination(totalResults, currentPage);
+            },
+            error: function() {
+                alert("Failed to fetch data. Please check your connection or try again later.");
+            }
+        });
+    });
+
+    // Pagination function
+    function displayPagination(totalResults, currentPage) {
+        const totalPages = Math.ceil(totalResults / resultsPerPage);
+        let paginationHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            paginationHTML += `<button class="${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+        }
+
+        $('#pagination').html(paginationHTML);
+    }
+
+    // Event listener for pagination
+    $('#pagination').on('click', 'button', function() {
+        currentPage = $(this).data('page');
+        $('#searchBtn').click();
+    });
+
+    // Display search results
+    function displayResults(books, container) {
+        let output = '';
+        books.forEach(book => {
+            const title = book.volumeInfo.title;
+            const coverImg = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no-image.png';
+            const bookId = book.id;
+
+            output += `
+                <div class="book-item">
+                    <img src="${coverImg}" alt="${title}">
+                    <a href="#" class="book-link" data-book-id="${bookId}">${title}</a>
+                </div>
+            `;
+        });
+        $(container).html(output);
+    }
+
+    // Fetch book details and display them
+    $(document).on('click', '.book-link', function(e) {
+        e.preventDefault();
+        const bookId = $(this).data('book-id');
+        const apiURL = `https://www.googleapis.com/books/v1/volumes/${bookId}`;
+        
+        $.ajax({
+            url: apiURL,
+            method: 'GET',
+            success: function(book) {
+                const bookDetails = `
+                    <h3>${book.volumeInfo.title}</h3>
+                    <img src="${book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'no-image.png'}" alt="${book.volumeInfo.title}">
+                    <p><strong>Author:</strong> ${book.volumeInfo.authors.join(', ')}</p>
+                    <p><strong>Publisher:</strong> ${book.volumeInfo.publisher}</p>
+                    <p><strong>Description:</strong> ${book.volumeInfo.description}</p>
+                `;
+                $('#book-details').html(bookDetails);
+            },
+            error: function() {
+                alert("Failed to load book details.");
+            }
+        });
+    });
+
+    // Display books from your public bookshelf
+    const bookshelfApiURL = 'https://www.googleapis.com/books/v1/users/YOUR_USER_ID/bookshelves/YOUR_SHELF_ID/volumes';
+    $.ajax({
+        url: bookshelfApiURL,
+        method: 'GET',
+        success: function(data) {
+            displayResults(data.items, '#bookshelf-results');
+        },
+        error: function() {
+            alert("Failed to load bookshelf.");
+        }
+    });
+});
+</script>
 
 
 
