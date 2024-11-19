@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milestone 4</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js">
     <style>
         /* General styling */
         body {
@@ -102,6 +101,11 @@
         .pagination {
             margin: 20px 0;
         }
+
+        .error-message {
+            color: #d9534f;
+            font-weight: bold;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
@@ -137,10 +141,10 @@
 
         <!-- Pagination -->
         <div class="pagination" id="pagination"></div>
-    </div>
 
-    <!-- Book Details -->
-    <div id="book-details" class="content"></div>
+        <!-- Error Message -->
+        <div id="error-message" class="error-message"></div>
+    </div>
 
     <script>
         $(document).ready(function () {
@@ -173,14 +177,27 @@
 
             // Fetch books from Google API
             function fetchBooks(query, startIndex) {
-                const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${startIndex}&maxResults=${resultsPerPage}`;
-                $.get(apiURL, function (data) {
-                    const books = data.items.map(book => ({
-                        thumbnail: book.volumeInfo.imageLinks?.thumbnail || 'no-image.png',
-                        title: book.volumeInfo.title,
-                        authors: book.volumeInfo.authors?.join(', ') || 'Unknown',
-                    }));
-                    renderBooks(books, currentView);
+                const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&startIndex=${startIndex}&maxResults=${resultsPerPage}`;
+                $.ajax({
+                    url: apiURL,
+                    method: 'GET',
+                    success: function (data) {
+                        if (data.totalItems === 0) {
+                            $('#error-message').text('No books found for your search query.');
+                            $('#book-results').empty();
+                        } else {
+                            $('#error-message').empty();
+                            const books = data.items.map(book => ({
+                                thumbnail: book.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/128x193?text=No+Image',
+                                title: book.volumeInfo.title,
+                                authors: book.volumeInfo.authors?.join(', ') || 'Unknown',
+                            }));
+                            renderBooks(books, currentView);
+                        }
+                    },
+                    error: function () {
+                        $('#error-message').text('An error occurred while fetching data. Please try again.');
+                    }
                 });
             }
 
@@ -202,7 +219,11 @@
             // Search button functionality
             $('#searchBtn').click(function () {
                 const query = $('#searchTerm').val();
-                fetchBooks(query, 0);
+                if (query.trim() === '') {
+                    $('#error-message').text('Please enter a search term.');
+                } else {
+                    fetchBooks(query, 0);
+                }
             });
         });
     </script>
