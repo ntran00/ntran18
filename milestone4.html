@@ -13,7 +13,6 @@
             color: #333;
         }
 
-        /* Navbar styling */
         .navbar {
             background-color: #ffccd5;
             padding: 10px 20px;
@@ -31,7 +30,6 @@
             text-decoration: underline;
         }
 
-        /* Main content styling */
         h1 {
             text-align: center;
             margin-top: 20px;
@@ -185,14 +183,12 @@
             display: block;
         }
     </style>
-    <!-- Add jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <!-- Add Mustache.js -->
     <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 </head>
 <body>
 
-<!-- Navbar -->
+
 <div class="navbar">
     <a href="index.html">Home</a>
     <a href="milestone1.html">Milestone 1</a>
@@ -211,7 +207,7 @@
 <div id="error-message"></div>
 <div id="book-results"></div>
 
-<!-- Modal -->
+
 <div class="overlay"></div>
 <div class="modal" id="bookModal">
     <h2 id="bookTitle"></h2>
@@ -222,7 +218,7 @@
 
 <script>
     $(document).ready(function () {
-        let currentView = 'grid'; // Default view
+        let currentView = 'grid'; 
 
         function toggleView(view) {
             currentView = view;
