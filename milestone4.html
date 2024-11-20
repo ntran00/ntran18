@@ -47,4 +47,125 @@
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchBtn {
+            background-color: #ffccd5;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        #searchBtn:hover {
+            background-color: #ffb3c0;
+        }
+
+        #error-message {
+            text-align: center;
+            color: red;
+        }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .book-item {
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .book-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .book-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .book-item p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+    <!-- Add jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <!-- Add Mustache.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="milestone1.html">Milestone 1</a>
+    <a href="booksearchpage.html">Milestone 2</a>
+    <a href="milestone3.html">Milestone 3</a>
+    <a href="milestone4.html">Milestone 4</a>
+</div>
+
+<h1>Milestone 4</h1>
+<input type="text" id="searchTerm" placeholder="Search for books">
+<button id="searchBtn">Search</button>
+<div id="error-message"></div>
+<div id="book-results"></div>
+
+<script>
+    $(document).ready(function () {
+        $('#searchBtn').click(function () {
+            const query = $('#searchTerm').val();
+            if (query.trim() === '') {
+                $('#error-message').text('Please enter a search term.');
+                return;
+            }
+            const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10`;
+            $.ajax({
+                url: apiURL,
+                method: 'GET',
+                success: function (data) {
+                    const books = data.items.map(book => ({
+                        thumbnail: book.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/128x193?text=No+Image',
+                        title: book.volumeInfo.title,
+                        authors: book.volumeInfo.authors?.join(', ') || 'Unknown',
+                    }));
+                    const template = `
+                        <div class="grid-view">
+                            {{#books}}
+                            <div class="book-item">
+                                <img src="{{thumbnail}}" alt="{{title}}">
+                                <p>{{title}}</p>
+                            </div>
+                            {{/books}}
+                        </div>`;
+                    const rendered = Mustache.render(template, { books });
+                    $('#book-results').html(rendered);
+                    $('#error-message').text('');
+                },
+                error: function () {
+                    $('#error-message').text('An error occurred while fetching data.');
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
