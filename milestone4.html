@@ -5,156 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Milestone 4</title>
     <style>
-        /* General styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #fdfdfd;
+            background-color: #ffffff;
             color: #333;
         }
 
         /* Navbar styling */
         .navbar {
-            background-color: #f8d7da;
-            padding: 10px;
+            background-color: #ffccd5;
+            padding: 10px 20px;
             text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         .navbar a {
             color: #333;
             text-decoration: none;
             margin: 0 15px;
-            padding: 8px 16px;
-            border-radius: 5px;
-        }
-
-        .navbar a:hover,
-        .navbar a.active {
-            background-color: #f5c6cb;
             font-weight: bold;
+            font-size: 16px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
         }
 
-        /* Page layout */
-        .content {
-            max-width: 800px;
-            margin: 20px auto;
+        /* Main content styling */
+        h1 {
             text-align: center;
-        }
-
-        #search-section {
-            margin: 20px 0;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            width: 70%;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            padding: 8px 16px;
-            background-color: #f5c6cb;
-            border: none;
+            margin-top: 20px;
             color: #333;
-            cursor: pointer;
-            border-radius: 4px;
         }
 
-        button:hover {
-            background-color: #f8d7da;
-        }
-
-        /* Views and pagination */
-        #view-toggle {
-            margin: 20px 0;
-        }
-
-        .view-btn {
-            margin: 0 5px;
-            padding: 6px 12px;
+        #searchTerm {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+            font-size: 16px;
             border: 1px solid #ddd;
-            cursor: pointer;
             border-radius: 4px;
-            background-color: #fff;
-        }
-
-        .view-btn.active {
-            background-color: #f5c6cb;
-        }
-
-        .book-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-
-        .book-item img {
-            max-height: 100px;
-            margin-right: 20px;
-        }
-
-        .pagination {
-            margin: 20px 0;
-        }
-
-        .error-message {
-            color: #d9534f;
-            font-weight: bold;
-        }
-    
-    </style>
-    <!-- Add jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <!-- Add Mustache.js -->
-    <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
-</head>
-<body>
-    <h1>Milestone 4</h1>
-    <input type="text" id="searchTerm" placeholder="Search for books">
-    <button id="searchBtn">Search</button>
-    <div id="error-message" style="color: red;"></div>
-    <div id="book-results"></div>
-    <script>
-        $(document).ready(function () {
-            $('#searchBtn').click(function () {
-                const query = $('#searchTerm').val();
-                if (query.trim() === '') {
-                    $('#error-message').text('Please enter a search term.');
-                    return;
-                }
-                const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10`;
-                $.ajax({
-                    url: apiURL,
-                    method: 'GET',
-                    success: function (data) {
-                        const books = data.items.map(book => ({
-                            thumbnail: book.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/128x193?text=No+Image',
-                            title: book.volumeInfo.title,
-                            authors: book.volumeInfo.authors?.join(', ') || 'Unknown',
-                        }));
-                        const template = `
-                            <div class="grid-view">
-                                {{#books}}
-                                <div class="book-item">
-                                    <img src="{{thumbnail}}" alt="{{title}}">
-                                    <p>{{title}}</p>
-                                </div>
-                                {{/books}}
-                            </div>`;
-                        const rendered = Mustache.render(template, { books });
-                        $('#book-results').html(rendered);
-                    },
-                    error: function () {
-                        $('#error-message').text('An error occurred while fetching data.');
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1
