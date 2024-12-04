@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1>Movie Explorer</h1>
+        <input type="text" id="searchTerm" placeholder="Search for movies..." />
+        <button id="searchBtn">Search</button>
+        <button id="gridViewBtn">Grid View</button>
+        <button id="listViewBtn">List View</button>
+    </div>
+
+    <!-- Results Section -->
+    <div id="movieResults" class="grid-view"></div>
+
+    <!-- Movie Details Section -->
+    <div id="movieDetails"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
