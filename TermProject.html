@@ -9,16 +9,16 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #fdf6f6;
+            background-color: #f3e8ff;
             color: #333;
         }
         .navbar {
-            background-color: #f4c2c2;
+            background-color: #b19cd9;
             padding: 15px;
             text-align: center;
         }
         .navbar a {
-            color: #333;
+            color: #fff;
             text-decoration: none;
             margin: 0 10px;
             font-weight: bold;
@@ -28,7 +28,7 @@
         }
         h1 {
             text-align: center;
-            color: #ff8b8b;
+            color: #a480cf;
         }
         .search-bar {
             text-align: center;
@@ -37,20 +37,20 @@
         .search-bar input {
             padding: 10px;
             width: 300px;
-            border: 2px solid #f4c2c2;
+            border: 2px solid #b19cd9;
             border-radius: 5px;
         }
         .search-bar button {
             padding: 10px 15px;
             border: none;
-            background-color: #ff8b8b;
+            background-color: #a480cf;
             color: white;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
         }
         .search-bar button:hover {
-            background-color: #ff6b6b;
+            background-color: #916bbf;
         }
         .movies-container {
             display: flex;
@@ -61,33 +61,33 @@
         }
         .movie-card {
             background-color: #fff;
-            border: 1px solid #f4c2c2;
+            border: 1px solid #b19cd9;
             border-radius: 10px;
             overflow: hidden;
-            width: 200px;
+            width: 180px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         .movie-card img {
             width: 100%;
-            height: 300px;
+            height: 270px;
             object-fit: cover;
         }
         .movie-card h3 {
             margin: 10px 0;
-            font-size: 16px;
+            font-size: 14px;
             color: #555;
         }
         .movie-card button {
-            background-color: #ff8b8b;
+            background-color: #a480cf;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 8px;
             border-radius: 0 0 10px 10px;
             cursor: pointer;
         }
         .movie-card button:hover {
-            background-color: #ff6b6b;
+            background-color: #916bbf;
         }
         /* Modal styling */
         .modal {
@@ -97,19 +97,17 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             z-index: 1000;
-            width: 80%;
-            max-width: 600px;
+            width: 60%;
+            max-width: 400px;
+            text-align: center;
         }
         .modal h2 {
             margin: 0 0 10px;
-            color: #ff8b8b;
-        }
-        .modal p {
-            color: #555;
+            color: #a480cf;
         }
         .modal img {
             max-width: 100%;
@@ -117,17 +115,24 @@
             margin-bottom: 10px;
             border-radius: 10px;
         }
+        .modal p {
+            color: #555;
+            font-size: 14px;
+        }
+        .modal .release-date {
+            margin-top: 10px;
+            font-weight: bold;
+        }
         .modal-close {
-            background-color: #ff8b8b;
+            background-color: #a480cf;
             color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            float: right;
         }
         .modal-close:hover {
-            background-color: #ff6b6b;
+            background-color: #916bbf;
         }
         .overlay {
             display: none;
@@ -160,14 +165,14 @@
 
 <div class="movies-container" id="moviesContainer"></div>
 
-
+<!-- Modal for movie details -->
 <div class="overlay" id="overlay"></div>
 <div class="modal" id="movieModal">
     <button class="modal-close" id="closeModal">Close</button>
     <h2 id="modalTitle"></h2>
     <img id="modalImage" src="" alt="Movie Poster">
     <p id="modalOverview"></p>
-    <p><strong>Release Date:</strong> <span id="modalReleaseDate"></span></p>
+    <p class="release-date"><strong>Release Date:</strong> <span id="modalReleaseDate"></span></p>
 </div>
 
 <script>
