@@ -5,156 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Search App</title>
     <style>
-        /* General Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
         }
-
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #2588BE;
-        }
-
-        /* Navbar Styling */
         .navbar {
-            background-color: #2588BE;
+            background-color: #C2C9F1;
             padding: 10px 20px;
-            color: white;
             text-align: center;
         }
-
         .navbar a {
-            color: white;
+            color: #555;
             text-decoration: none;
             margin: 0 15px;
             font-weight: bold;
         }
-
         .navbar a:hover {
             text-decoration: underline;
         }
-
-        /* Search Section */
-        .search-section {
+        h1 {
+            text-align: center;
+            color: #555;
+        }
+        #search-section {
             text-align: center;
             margin: 20px 0;
         }
-
-        .search-section input {
-            padding: 10px;
-            width: 60%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .search-section button {
-            padding: 10px 15px;
-            margin-left: 5px;
-            border: none;
-            background-color: #FF9AA2;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .search-section button:hover {
-            background-color: #FF7480;
-        }
-
-        /* Movie Results Section */
-        #movieResults {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px;
-        }
-
-        .grid-view .movie-item {
-            flex: 1 1 calc(20% - 10px);
-            text-align: center;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            transition: transform 0.2s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .list-view .movie-item {
-            flex: 1 1 100%;
-            text-align: left;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px;
-            transition: transform 0.2s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .movie-item:hover {
-            transform: scale(1.05);
-            background-color: #FFF0F2;
-        }
-
-        .movie-item img {
-            width: 100%;
-            border-radius: 5px;
-        }
-
-        .movie-item h3 {
-            margin: 10px 0 0;
-            font-size: 16px;
-            color: #2588BE;
-        }
-
-        /* Movie Details Section */
-        #movieDetails {
-            margin: 20px;
+        #results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             padding: 20px;
-            border: 1px solid #ccc;
-            background-color: #FFDFE5;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: none;
+            margin: 0 auto;
+            max-width: 1200px;
         }
-
-        #movieDetails h2 {
-            color: #2588BE;
-        }
-
-        #movieDetails img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        #movieDetails p {
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Toggle Buttons for Layout */
-        .view-toggle {
+        .movie-card {
+            background: #F4F4F9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin: 20px;
         }
-
-        .view-toggle button {
-            padding: 10px 15px;
+        .movie-card img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .movie-card h3 {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .movie-card p {
+            font-size: 0.9em;
+            color: #777;
+        }
+        #details-section {
+            display: none;
+            padding: 20px;
+            background: #FFF;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 5px;
             border: none;
-            background-color: #FF9AA2;
+            background-color: #C2C9F1;
             color: white;
             border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
         }
-
-        .view-toggle button:hover {
-            background-color: #FF7480;
+        .pagination button:hover {
+            background-color: #A6B5E2;
+        }
+        .pagination .active {
+            background-color: #888FD5;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -162,107 +93,133 @@
 <body>
     <!-- Navbar -->
     <div class="navbar">
-        <a href="index.html">Home</a>
-        <a href="milestone1.html">Milestone 1</a>
-        <a href="milestone2.html">Milestone 2</a>
-        <a href="milestone3.html">Milestone 3</a>
-        <a href="milestone4.html">Milestone 4</a>
+        <a href="#">Home</a>
+        <a href="#">Popular</a>
+        <a href="#">Actors</a>
     </div>
 
-    <!-- Title -->
     <h1>Movie Search App</h1>
 
     <!-- Search Section -->
-    <div class="search-section">
-        <input type="text" id="searchQuery" placeholder="Search for movies...">
-        <button id="searchButton">Search</button>
+    <div id="search-section">
+        <input type="text" id="search-input" placeholder="Search movies or TV shows..." />
+        <button id="search-btn">Search</button>
     </div>
 
-    <!-- Toggle View Buttons -->
-    <div class="view-toggle">
-        <button id="gridView">Grid View</button>
-        <button id="listView">List View</button>
-    </div>
+    <!-- Results Section -->
+    <div id="results-section"></div>
 
-    <!-- Movie Results -->
-    <div id="movieResults" class="grid-view"></div>
+    <!-- Details Section -->
+    <div id="details-section"></div>
 
-    <!-- Movie Details -->
-    <div id="movieDetails"></div>
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
 
     <script>
-        $(document).ready(function () {
-            // Search functionality
-            $('#searchButton').click(function () {
-                const query = $('#searchQuery').val().trim();
-                if (query === '') {
-                    alert('Please enter a search term!');
-                    return;
-                }
+        const API_KEY = 'your_tmdb_api_key_here'; // Replace with your TMDb API key
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        let currentPage = 1;
+        let currentSearchTerm = '';
 
-                const apiUrl = `https://www.omdbapi.com/?s=${query}&apikey=your_api_key&type=movie`;
-                $.ajax({
-                    url: apiUrl,
-                    method: 'GET',
-                    success: function (data) {
-                        if (data.Response === 'True') {
-                            renderMovies(data.Search);
-                        } else {
-                            alert('No movies found!');
-                        }
-                    },
-                    error: function () {
-                        alert('An error occurred while fetching data.');
-                    }
-                });
+        // Fetch movies from TMDb API
+        function fetchMovies(query, page = 1) {
+            const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`;
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: (response) => {
+                    displayResults(response.results);
+                    setupPagination(response.page, response.total_pages);
+                },
+                error: () => {
+                    alert('Failed to fetch data from TMDb API.');
+                }
+            });
+        }
+
+        // Display search results
+        function displayResults(movies) {
+            const resultsSection = $('#results-section');
+            resultsSection.empty();
+
+            movies.forEach(movie => {
+                const movieCard = `
+                    <div class="movie-card" data-id="${movie.id}">
+                        <img src="https://image.tmdb.org/t/p/w200/${movie.poster_path}" alt="${movie.title}">
+                        <h3>${movie.title}</h3>
+                        <p>${movie.release_date}</p>
+                    </div>
+                `;
+                resultsSection.append(movieCard);
             });
 
-            // Render movies
-            function renderMovies(movies) {
-                const resultsContainer = $('#movieResults');
-                resultsContainer.empty();
+            // Add click listener for details
+            $('.movie-card').on('click', function () {
+                const movieId = $(this).data('id');
+                fetchMovieDetails(movieId);
+            });
+        }
 
-                movies.forEach(movie => {
-                    const movieHTML = `
-                        <div class="movie-item" data-id="${movie.imdbID}">
-                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'placeholder.jpg'}" alt="${movie.Title}">
-                            <h3>${movie.Title}</h3>
-                        </div>
-                    `;
-                    resultsContainer.append(movieHTML);
-                });
+        // Fetch movie details
+        function fetchMovieDetails(movieId) {
+            const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`;
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: (movie) => {
+                    displayDetails(movie);
+                },
+                error: () => {
+                    alert('Failed to fetch movie details.');
+                }
+            });
+        }
+
+        // Display movie details
+        function displayDetails(movie) {
+            const detailsSection = $('#details-section');
+            const detailsHTML = `
+                <h2>${movie.title}</h2>
+                <img src="https://image.tmdb.org/t/p/w300/${movie.poster_path}" alt="${movie.title}">
+                <p><strong>Release Date:</strong> ${movie.release_date}</p>
+                <p><strong>Overview:</strong> ${movie.overview}</p>
+                <p><strong>Genres:</strong> ${movie.genres.map(genre => genre.name).join(', ')}</p>
+                <button id="close-details">Close</button>
+            `;
+            detailsSection.html(detailsHTML).show();
+
+            // Close details section
+            $('#close-details').on('click', function () {
+                detailsSection.hide();
+            });
+        }
+
+        // Setup pagination
+        function setupPagination(current, total) {
+            const pagination = $('#pagination');
+            pagination.empty();
+
+            for (let i = 1; i <= total; i++) {
+                const button = `<button class="${i === current ? 'active' : ''}" data-page="${i}">${i}</button>`;
+                pagination.append(button);
             }
 
-            // Movie details
-            $(document).on('click', '.movie-item', function () {
-                const movieID = $(this).data('id');
-                const apiUrl = `https://www.omdbapi.com/?i=${movieID}&apikey=your_api_key`;
-                $.ajax({
-                    url: apiUrl,
-                    method: 'GET',
-                    success: function (data) {
-                        $('#movieDetails').html(`
-                            <h2>${data.Title}</h2>
-                            <img src="${data.Poster !== 'N/A' ? data.Poster : 'placeholder.jpg'}" alt="${data.Title}">
-                            <p><strong>Year:</strong> ${data.Year}</p>
-                            <p><strong>Genre:</strong> ${data.Genre}</p>
-                            <p><strong>Plot:</strong> ${data.Plot}</p>
-                        `).fadeIn();
-                    },
-                    error: function () {
-                        alert('Failed to fetch movie details.');
-                    }
-                });
+            // Add event listener for pagination
+            $('#pagination button').on('click', function () {
+                const page = $(this).data('page');
+                currentPage = page;
+                fetchMovies(currentSearchTerm, page);
             });
+        }
 
-            // Toggle between grid and list views
-            $('#gridView').click(function () {
-                $('#movieResults').removeClass('list-view').addClass('grid-view');
-            });
-
-            $('#listView').click(function () {
-                $('#movieResults').removeClass('grid-view').addClass('list-view');
-            });
+        // Event listeners
+        $('#search-btn').on('click', function () {
+            currentSearchTerm = $('#search-input').val();
+            if (currentSearchTerm) {
+                fetchMovies(currentSearchTerm);
+            } else {
+                alert('Please enter a search term.');
+            }
         });
     </script>
 </body>
