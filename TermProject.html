@@ -91,7 +91,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <!-- Navbar -->
+  
     <div class="navbar">
         <a href="#">Home</a>
         <a href="#">Popular</a>
@@ -99,24 +99,22 @@
     </div>
 
     <h1>Movie Search App</h1>
-
-    <!-- Search Section -->
     <div id="search-section">
         <input type="text" id="search-input" placeholder="Search movies or TV shows..." />
         <button id="search-btn">Search</button>
     </div>
 
-    <!-- Results Section -->
+ 
     <div id="results-section"></div>
 
-    <!-- Details Section -->
+   
     <div id="details-section"></div>
 
-    <!-- Pagination -->
+    
     <div class="pagination" id="pagination"></div>
 
     <script>
-        const API_KEY = 'your_tmdb_api_key_here'; // Replace with your TMDb API key
+        const API_KEY = 'c71be6b83bda07cd90d07c62411c24ad'; 
         const BASE_URL = 'https://api.themoviedb.org/3';
         let currentPage = 1;
         let currentSearchTerm = '';
@@ -153,14 +151,14 @@
                 resultsSection.append(movieCard);
             });
 
-            // Add click listener for details
+            
             $('.movie-card').on('click', function () {
                 const movieId = $(this).data('id');
                 fetchMovieDetails(movieId);
             });
         }
 
-        // Fetch movie details
+        
         function fetchMovieDetails(movieId) {
             const url = `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`;
             $.ajax({
@@ -175,7 +173,7 @@
             });
         }
 
-        // Display movie details
+        
         function displayDetails(movie) {
             const detailsSection = $('#details-section');
             const detailsHTML = `
@@ -188,13 +186,13 @@
             `;
             detailsSection.html(detailsHTML).show();
 
-            // Close details section
+            
             $('#close-details').on('click', function () {
                 detailsSection.hide();
             });
         }
 
-        // Setup pagination
+        
         function setupPagination(current, total) {
             const pagination = $('#pagination');
             pagination.empty();
@@ -204,7 +202,7 @@
                 pagination.append(button);
             }
 
-            // Add event listener for pagination
+            
             $('#pagination button').on('click', function () {
                 const page = $(this).data('page');
                 currentPage = page;
@@ -212,7 +210,7 @@
             });
         }
 
-        // Event listeners
+        
         $('#search-btn').on('click', function () {
             currentSearchTerm = $('#search-input').val();
             if (currentSearchTerm) {
