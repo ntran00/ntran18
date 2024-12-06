@@ -89,7 +89,7 @@
         .movie-card button:hover {
             background-color: #916bbf;
         }
-     
+        /* Modal styling */
         .modal {
             display: none;
             position: fixed;
@@ -122,6 +122,16 @@
         .modal .release-date {
             margin-top: 10px;
             font-weight: bold;
+        }
+        .modal .rating {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .modal .cast {
+            text-align: left;
+            margin-top: 10px;
+            color: #444;
+            font-size: 14px;
         }
         .modal-close {
             background-color: #a480cf;
@@ -172,7 +182,12 @@
     <h2 id="modalTitle"></h2>
     <img id="modalImage" src="" alt="Movie Poster">
     <p id="modalOverview"></p>
+    <p class="rating"><strong>Rating:</strong> <span id="modalRating"></span>/10</p>
     <p class="release-date"><strong>Release Date:</strong> <span id="modalReleaseDate"></span></p>
+    <div class="cast">
+        <strong>Cast:</strong>
+        <ul id="modalCast"></ul>
+    </div>
 </div>
 
 <script>
@@ -217,25 +232,29 @@
 
         $(document).on("click", ".detailsButton", function () {
             const movieId = $(this).data("id");
-            const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`;
+            const movieUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`;
+            const castUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`;
 
-            $.ajax({
-                url: url,
-                method: "GET",
-                success: function (movie) {
-                    showModal(movie);
-                },
-                error: function () {
-                    alert("Failed to fetch movie details.");
-                }
+            $.when(
+                $.ajax({ url: movieUrl, method: "GET" }),
+                $.ajax({ url: castUrl, method: "GET" })
+            ).then(function (movieResponse, castResponse) {
+                showModal(movieResponse[0], castResponse[0].cast);
+            }, function () {
+                alert("Failed to fetch movie details.");
             });
         });
 
-        function showModal(movie) {
+        function showModal(movie, cast) {
             $("#modalTitle").text(movie.title);
             $("#modalImage").attr("src", `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
             $("#modalOverview").text(movie.overview);
+            $("#modalRating").text(movie.vote_average);
             $("#modalReleaseDate").text(movie.release_date);
+
+            const castList = cast.slice(0, 5).map(c => `<li>${c.name} as ${c.character}</li>`).join("");
+            $("#modalCast").html(castList || "<li>No cast information available.</li>");
+
             $("#overlay, #movieModal").fadeIn();
         }
 
