@@ -30,26 +30,23 @@
             text-align: center;
             color: #a480cf;
         }
-        .search-bar {
-            text-align: center;
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
             margin: 20px 0;
         }
-        .search-bar input {
+        .controls select, .controls input, .controls button {
             padding: 10px;
-            width: 300px;
-            border: 2px solid #b19cd9;
+            border: 1px solid #b19cd9;
             border-radius: 5px;
         }
-        .search-bar button {
-            padding: 10px 15px;
-            border: none;
+        .controls button {
             background-color: #a480cf;
             color: white;
-            font-weight: bold;
-            border-radius: 5px;
             cursor: pointer;
         }
-        .search-bar button:hover {
+        .controls button:hover {
             background-color: #916bbf;
         }
         .movies-container {
@@ -59,100 +56,55 @@
             gap: 15px;
             padding: 20px;
         }
-        .movie-card {
+        .movie-card, .movie-list-item {
             background-color: #fff;
             border: 1px solid #b19cd9;
             border-radius: 10px;
             overflow: hidden;
-            width: 180px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .movie-card {
+            width: 180px;
             text-align: center;
         }
-        .movie-card img {
+        .movie-card img, .movie-list-item img {
             width: 100%;
-            height: 270px;
             object-fit: cover;
         }
-        .movie-card h3 {
+        .movie-card h3, .movie-list-item h3 {
             margin: 10px 0;
             font-size: 14px;
             color: #555;
         }
-        .movie-card button {
-            background-color: #a480cf;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 0 0 10px 10px;
-            cursor: pointer;
+        .movie-list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 10px;
         }
-        .movie-card button:hover {
-            background-color: #916bbf;
+        .movie-list-item img {
+            width: 100px;
+            height: 150px;
         }
-        /* Modal styling */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            width: 50%;
-            max-width: 280px;
+        .movie-list-item div {
+            flex: 1;
+        }
+        .pagination {
             text-align: center;
+            margin: 20px 0;
         }
-        .modal h2 {
-            margin: 0 0 10px;
-            color: #a480cf;
-        }
-        .modal img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
-        .modal p {
-            color: #555;
-            font-size: 14px;
-        }
-        .modal .release-date {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .modal .rating {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .modal .cast {
-            text-align: left;
-            margin-top: 10px;
-            color: #444;
-            font-size: 14px;
-        }
-        .modal-close {
+        .pagination button {
+            padding: 10px 15px;
+            border: none;
             background-color: #a480cf;
             color: white;
-            border: none;
-            padding: 10px 15px;
+            font-weight: bold;
+            margin: 0 5px;
             border-radius: 5px;
             cursor: pointer;
         }
-        .modal-close:hover {
+        .pagination button:hover {
             background-color: #916bbf;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 500;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -168,99 +120,124 @@
 
 <h1>Explore Movies</h1>
 
-<div class="search-bar">
+<div class="controls">
     <input type="text" id="searchInput" placeholder="Search for movies...">
+    <select id="sortOptions">
+        <option value="title">Title</option>
+        <option value="release_date">Release Date</option>
+        <option value="rating">Rating</option>
+    </select>
+    <input type="number" id="minRating" placeholder="Min Rating" min="0" max="10">
     <button id="searchButton">Search</button>
+    <button id="toggleViewButton">Switch to List View</button>
 </div>
 
 <div class="movies-container" id="moviesContainer"></div>
 
-<!-- Modal for movie details -->
-<div class="overlay" id="overlay"></div>
-<div class="modal" id="movieModal">
-    <button class="modal-close" id="closeModal">Close</button>
-    <h2 id="modalTitle"></h2>
-    <img id="modalImage" src="" alt="Movie Poster">
-    <p id="modalOverview"></p>
-    <p class="rating"><strong>Rating:</strong> <span id="modalRating"></span>/10</p>
-    <p class="release-date"><strong>Release Date:</strong> <span id="modalReleaseDate"></span></p>
-    <div class="cast">
-        <strong>Cast:</strong>
-        <ul id="modalCast"></ul>
-    </div>
+<div class="pagination">
+    <button id="prevPage">Previous</button>
+    <span id="currentPage">1</span>
+    <button id="nextPage">Next</button>
 </div>
 
 <script>
-    const apiKey = "c71be6b83bda07cd90d07c62411c24ad";
+    const apiKey = "YOUR_API_KEY";
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentView = "grid"; // "grid" or "list"
+    let movies = [];
 
     $(document).ready(function () {
         $("#searchButton").on("click", function () {
-            const query = $("#searchInput").val();
-            if (!query) {
-                alert("Please enter a search term.");
-                return;
+            currentPage = 1;
+            searchMovies();
+        });
+
+        $("#prevPage").on("click", function () {
+            if (currentPage > 1) {
+                currentPage--;
+                displayMovies();
             }
+        });
+
+        $("#nextPage").on("click", function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayMovies();
+            }
+        });
+
+        $("#toggleViewButton").on("click", function () {
+            currentView = currentView === "grid" ? "list" : "grid";
+            $(this).text(`Switch to ${currentView === "grid" ? "List" : "Grid"} View`);
+            displayMovies();
+        });
+
+        function searchMovies() {
+            const query = $("#searchInput").val();
             const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}`;
 
             $.ajax({
                 url: url,
                 method: "GET",
                 success: function (response) {
-                    displayMovies(response.results);
+                    movies = response.results;
+                    totalPages = Math.ceil(movies.length / 5); // 5 movies per page
+                    displayMovies();
                 },
                 error: function () {
                     alert("Failed to fetch movies.");
                 }
             });
-        });
+        }
 
-        function displayMovies(movies) {
+        function displayMovies() {
             const container = $("#moviesContainer");
             container.empty();
 
-            movies.forEach(movie => {
-                const card = `
-                    <div class="movie-card">
-                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
-                        <h3>${movie.title}</h3>
-                        <button class="detailsButton" data-id="${movie.id}">Details</button>
-                    </div>
-                `;
+            const sortedMovies = sortMovies(movies);
+            const paginatedMovies = sortedMovies.slice((currentPage - 1) * 5, currentPage * 5);
+
+            paginatedMovies.forEach(movie => {
+                const rating = movie.vote_average || "N/A";
+                if (rating < $("#minRating").val()) return;
+
+                const card = currentView === "grid"
+                    ? `
+                        <div class="movie-card">
+                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+                            <h3>${movie.title}</h3>
+                            <p>Rating: ${rating}</p>
+                        </div>
+                    `
+                    : `
+                        <div class="movie-list-item">
+                            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+                            <div>
+                                <h3>${movie.title}</h3>
+                                <p>Rating: ${rating}</p>
+                            </div>
+                        </div>
+                    `;
                 container.append(card);
             });
+
+            $("#currentPage").text(currentPage);
         }
 
-        $(document).on("click", ".detailsButton", function () {
-            const movieId = $(this).data("id");
-            const movieUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`;
-            const castUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`;
-
-            $.when(
-                $.ajax({ url: movieUrl, method: "GET" }),
-                $.ajax({ url: castUrl, method: "GET" })
-            ).then(function (movieResponse, castResponse) {
-                showModal(movieResponse[0], castResponse[0].cast);
-            }, function () {
-                alert("Failed to fetch movie details.");
+        function sortMovies(movies) {
+            const sortOption = $("#sortOptions").val();
+            return movies.sort((a, b) => {
+                if (sortOption === "title") {
+                    return a.title.localeCompare(b.title);
+                } else if (sortOption === "release_date") {
+                    return new Date(a.release_date) - new Date(b.release_date);
+                } else if (sortOption === "rating") {
+                    return b.vote_average - a.vote_average;
+                }
+                return 0;
             });
-        });
-
-        function showModal(movie, cast) {
-            $("#modalTitle").text(movie.title);
-            $("#modalImage").attr("src", `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
-            $("#modalOverview").text(movie.overview);
-            $("#modalRating").text(movie.vote_average);
-            $("#modalReleaseDate").text(movie.release_date);
-
-            const castList = cast.slice(0, 5).map(c => `<li>${c.name} as ${c.character}</li>`).join("");
-            $("#modalCast").html(castList || "<li>No cast information available.</li>");
-
-            $("#overlay, #movieModal").fadeIn();
         }
-
-        $("#closeModal, #overlay").on("click", function () {
-            $("#overlay, #movieModal").fadeOut();
-        });
     });
 </script>
 
