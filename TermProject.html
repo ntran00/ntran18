@@ -62,6 +62,7 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
         .movie-card {
             width: 180px;
@@ -106,6 +107,42 @@
         .pagination button:hover {
             background-color: #916bbf;
         }
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            max-width: 280px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .modal-header {
+            background-color: #b19cd9;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .modal-content {
+            padding: 20px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: red;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -140,11 +177,17 @@
     <button id="nextPage">Next</button>
 </div>
 
+<div class="modal" id="movieModal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-header" id="modalTitle">Movie Details</div>
+    <div class="modal-content" id="modalContent"></div>
+</div>
+
 <script>
     const apiKey = "c71be6b83bda07cd90d07c62411c24ad";
     let currentPage = 1;
     let totalPages = 1;
-    let currentView = "grid"; // "grid" or "list"
+    let currentView = "grid";
     let movies = [];
 
     $(document).ready(function () {
@@ -173,6 +216,10 @@
             displayMovies();
         });
 
+        $("#modalClose").on("click", function () {
+            $("#movieModal").fadeOut();
+        });
+
         function searchMovies() {
             const query = $("#searchInput").val();
             const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}`;
@@ -182,7 +229,7 @@
                 method: "GET",
                 success: function (response) {
                     movies = response.results;
-                    totalPages = Math.ceil(movies.length / 5); // 5 movies per page
+                    totalPages = Math.ceil(movies.length / 5);
                     displayMovies();
                 },
                 error: function () {
@@ -195,47 +242,58 @@
             const container = $("#moviesContainer");
             container.empty();
 
-            const sortedMovies = sortMovies(movies);
-            const paginatedMovies = sortedMovies.slice((currentPage - 1) * 5, currentPage * 5);
+            const paginatedMovies = movies.slice((currentPage - 1) * 5, currentPage * 5);
 
             paginatedMovies.forEach(movie => {
-                const rating = movie.vote_average || "N/A";
-                if (rating < $("#minRating").val()) return;
-
                 const card = currentView === "grid"
                     ? `
-                        <div class="movie-card">
+                        <div class="movie-card" data-id="${movie.id}">
                             <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
                             <h3>${movie.title}</h3>
-                            <p>Rating: ${rating}</p>
+                            <p>Rating: ${movie.vote_average || "N/A"}</p>
                         </div>
                     `
                     : `
-                        <div class="movie-list-item">
+                        <div class="movie-list-item" data-id="${movie.id}">
                             <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
                             <div>
                                 <h3>${movie.title}</h3>
-                                <p>Rating: ${rating}</p>
+                                <p>Rating: ${movie.vote_average || "N/A"}</p>
                             </div>
                         </div>
                     `;
                 container.append(card);
             });
 
+            $(".movie-card, .movie-list-item").on("click", function () {
+                const movieId = $(this).data("id");
+                fetchMovieDetails(movieId);
+            });
+
             $("#currentPage").text(currentPage);
         }
 
-        function sortMovies(movies) {
-            const sortOption = $("#sortOptions").val();
-            return movies.sort((a, b) => {
-                if (sortOption === "title") {
-                    return a.title.localeCompare(b.title);
-                } else if (sortOption === "release_date") {
-                    return new Date(a.release_date) - new Date(b.release_date);
-                } else if (sortOption === "rating") {
-                    return b.vote_average - a.vote_average;
+        function fetchMovieDetails(movieId) {
+            const url = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&append_to_response=credits`;
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function (data) {
+                    const cast = data.credits.cast.slice(0, 5).map(c => c.name).join(", ");
+                    const content = `
+                        <p><strong>Title:</strong> ${data.title}</p>
+                        <p><strong>Release Date:</strong> ${data.release_date}</p>
+                        <p><strong>Overview:</strong> ${data.overview}</p>
+                        <p><strong>Rating:</strong> ${data.vote_average}</p>
+                        <p><strong>Cast:</strong> ${cast}</p>
+                    `;
+                    $("#modalTitle").text(data.title);
+                    $("#modalContent").html(content);
+                    $("#movieModal").fadeIn();
+                },
+                error: function () {
+                    alert("Failed to fetch movie details.");
                 }
-                return 0;
             });
         }
     });
